@@ -14,9 +14,11 @@ Supports multiline messages, yearly breakdowns, and customizable sorting with op
 
 ## Installation
 
+```
 git clone https://github.com/SammyTbeile/whatsapp_stats.git
 cd whatsapp_stats
 cargo build --release
+```
 
 ## Usage
 
