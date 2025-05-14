@@ -13,11 +13,7 @@ struct Args {
     /// Print out per year stats
     #[arg(short, long, action)]
     year: bool,
-
-    /// Print out per user stats
-    #[arg(short, long, action)]
-    user: bool,
-
+    
     /// Pretty print the table
     #[arg(short, long, action)]
     pretty: bool,
@@ -186,22 +182,19 @@ fn main() {
     let args = Args::parse();
     let content = fs::read_to_string(&args.path).expect("Failed to read file");
     let messages = parse(&content);
-
-    if args.user {
-        if args.year {
-            let mut grouped: HashMap<i32, Vec<Message>> = HashMap::new();
-            for msg in &messages {
-                grouped.entry(msg.timestamp.year()).or_default().push(msg.clone());
-            }
-
-            for (year, msgs) in grouped.into_iter().collect::<std::collections::BTreeMap<_,_>>() {
-                println!("\n=== Stats for {} ===", year);
-                let stats = compute_stats(&msgs);
-                print_stats(stats, args.pretty, args.sort.clone());
-            }
-        } else {
-            let stats = compute_stats(&messages);
-            print_stats(stats, args.pretty, args.sort);
+    if args.year {
+        let mut grouped: HashMap<i32, Vec<Message>> = HashMap::new();
+        for msg in &messages {
+            grouped.entry(msg.timestamp.year()).or_default().push(msg.clone());
         }
-    }
+
+        for (year, msgs) in grouped.into_iter().collect::<std::collections::BTreeMap<_,_>>() {
+            println!("\n=== Stats for {} ===", year);
+            let stats = compute_stats(&msgs);
+            print_stats(stats, args.pretty, args.sort.clone());
+        }
+    } else {
+        let stats = compute_stats(&messages);
+        print_stats(stats, args.pretty, args.sort);
+        }
 }
